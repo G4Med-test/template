@@ -68,7 +68,23 @@ Because the macro runs as written, it must be self-contained (no
 `single_run` and `energy_mev` come from
 [`ci-workflows/validation/geantval.py`](https://github.com/G4Med-test/ci-workflows/blob/main/validation/geantval.py).
 
-### 4. Run everything locally
+### 4. Geant4 versions and integration
+
+Pushes build with the Geant4 version set by `TAG` in `Apptainer.def`. To run the
+whole pipeline with another published version of
+[`geant4-alma9`](https://github.com/G4Med-test/geant4-alma9), use *Actions → CI
+Pipeline → Run workflow* with `geant4_tag`, or:
+
+```bash
+gh workflow run ci.yml -R G4Med-test/MyTest -f geant4_tag=v11.4.3
+```
+
+When the test is ready, add it to
+[`ci-workflows/tests.json`](https://github.com/G4Med-test/ci-workflows/blob/main/tests.json)
+with a pull request: ci-workflows then checks it on every change, and it is run
+automatically with every new Geant4 version.
+
+### 5. Run everything locally
 
 You can test and run everything locally. To do so, You need [Apptainer](https://apptainer.org/docs/user/latest/quick_start.html)
 ≥ 1.5  and Python ≥ 3.9.
@@ -82,7 +98,8 @@ git clone https://github.com/G4Med-test/ci-workflows.git
 
 **Get the container**, in one of two ways:
 
-- download the image built by the CI. It is tagged with the full commit SHA and the
+- download the image built by the CI. It is tagged with the full commit SHA (plus
+  `-<geant4 tag>` for runs with a different Geant4 version, see below) and the
   package name is the lowercase repository name. 
 
   ```bash
