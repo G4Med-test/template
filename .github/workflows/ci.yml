@@ -10,7 +10,7 @@ on:
 jobs:
   run-pipeline:
     if: github.repository != 'G4Med-test/template'
-    
+
     uses: G4Med-test/ci-workflows/.github/workflows/pipeline.yml@main
     permissions:
       contents: read

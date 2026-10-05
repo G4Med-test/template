@@ -1,20 +1,6 @@
-#
+# Smoke test run on every push: one event, only generic Geant4 commands.
+# Add your application's commands as needed, keeping it fast.
 /control/verbose 2
 /run/verbose 2
-#
-#
-/physics/setIonInelasticProcess bic
-#
-#/run/numberOfThreads 1
-#
 /run/initialize
-#
-#
-/process/list
-# /process/inactivate hadElastic
-/process/inactivate ionElastic
-#
-#
-/histoManager/setFileName unit
-##
 /run/beamOn 1

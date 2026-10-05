@@ -1,0 +1,13 @@
+# Example validation macro: rename it and add as many as you need, listing each
+# one in validation/config.json. The pipeline runs it unchanged, so it must be
+# self-contained (no /control/execute, loops or aliases). It runs in an empty
+# output directory: write result files with relative names (e.g. result.txt).
+/control/verbose 2
+/run/verbose 1
+# TODO: replace with your application's physics list command, read by
+# validation/parser.py:metadata.
+/myapp/phys/addPhysics FTFP_BERT
+/run/initialize
+/gun/particle proton
+/gun/energy 100 MeV
+/run/beamOn 100000
