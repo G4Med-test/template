@@ -68,6 +68,30 @@ Because the macro runs as written, it must be self-contained (no
 `single_run` and `energy_mev` come from
 [`ci-workflows/validation/geantval.py`](https://github.com/G4Med-test/ci-workflows/blob/main/validation/geantval.py).
 
+#### Put every input parameter in the macro
+
+The pipeline starts your executable as `<executable> <macro>`: no other
+command-line arguments and no environment variables. Anything your application
+reads from `argv[2]`, `argv[3]`, ... or from `getenv()` is therefore missing in
+the CI (and reading `argv[i]` beyond `argc` crashes). Keep **all** input
+parameters (geometry, materials, physics list, beam, scoring, random seed) in the
+macro, as UI commands:
+
+- **simplicity**: one file describes the whole run, and the same macro runs
+  unchanged on your machine, on GitHub and on the INFN runners;
+- **reproducibility**: the macro is versioned with the code, so every result can
+  be traced back to the exact settings that produced it; `metadata()` can only
+  report settings it can read from the macro.
+
+For a parameter that is not already a Geant4 command, add a `G4UImessenger` to
+your application, e.g. `/MyTest/det/thickness 288 mm`. Geometry and physics
+parameters are used by `/run/initialize`, so make such commands available in
+`G4State_PreInit` only and set them **before** `/run/initialize` in the macro; a
+command issued in the wrong state interrupts the batch and fails the run, instead
+of silently using a default. Fix the random seed, if you need one, with
+`/random/setSeeds` in the macro. To scan a parameter, write one macro per value
+and list them all in `config.json`.
+
 ### 4. Geant4 versions and integration
 
 Pushes build with the Geant4 version set by `TAG` in `Apptainer.def`. To run the
