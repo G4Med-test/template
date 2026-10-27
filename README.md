@@ -108,7 +108,31 @@ When the test is ready, add it to
 with a pull request: ci-workflows then checks it on every change, and it is run
 automatically with every new Geant4 version.
 
-### 5. Run everything locally
+### 5. Small changes without running the validation
+
+Every change reaches the default branch through a pull request. The pull request
+always runs the GitHub checks (build and unit test), which are required to merge it.
+After the merge, the push on the default branch runs the **whole pipeline**: validation
+on the Padova runners and publication of the results. For a change that cannot alter
+the results, skip that second part:
+
+- **Documentation only** (`*.md` files anywhere, `docs/`, `LICENSE`, `.gitignore`):
+  nothing to do. `ci.yml` ignores pushes that change only these files (`paths-ignore`),
+  so merging such a pull request runs nothing. If the same push also changes any other
+  file, the pipeline runs as usual.
+- **Any other change that cannot alter the results** (a comment in the code, a CI
+  tweak...): write `[skip ci]` in the **merge commit message**. With *Squash and merge*
+  the message defaults to the pull request title, so the simplest way is to put
+  `[skip ci]` in the title, e.g. `Fix typo in the geometry comments [skip ci]`; or type
+  it in the commit message box when merging. GitHub then starts no workflow for that
+  push. Do not put it in the commits of the pull request: their checks would not run
+  and the pull request could not be merged.
+
+Skipping is a promise that the results would not change: the published results stay
+those of the previous commit (the dashboard shows which commit they come from). When in
+doubt, let it run. To run it later anyway: *Actions → CI Pipeline → Run workflow*.
+
+### 6. Run everything locally
 
 You can test and run everything locally. To do so, You need [Apptainer](https://apptainer.org/docs/user/latest/quick_start.html)
 ≥ 1.5  and Python ≥ 3.9.
