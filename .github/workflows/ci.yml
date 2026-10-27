@@ -3,6 +3,14 @@ name: CI Pipeline
 on:
   push:
     branches: [ "master", "main" ]
+    # A push changing only these files does not run the pipeline, so neither the
+    # validation on Padova nor the publication of results (README, "Small changes").
+    # Pull requests always run: their checks are required to merge.
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "LICENSE*"
+      - ".gitignore"
   pull_request:
     branches: [ "master", "main" ]
   # Also started by ci-workflows when a new Geant4 version is published.
