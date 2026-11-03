@@ -28,7 +28,7 @@ It comes pre-configured with:
 | `main.cc`, `src/`, `include/` | Your Geant4 application. |
 | `macro/unit.mac` | One-event smoke test, run on every push (this name is fixed). |
 | `macro/*.mac` | Your validation macros, **with any name**. `example.mac` is only an example. |
-| `validation/config.json` | Which of your macros are validation runs, e.g. `{"macros": ["proton_100MeV.mac", "carbon/c12_400MeV.mac"]}` (paths relative to `macro/`). |
+| `validation/config.json` | Which of your macros are validation runs, e.g. `{"macros": ["proton_100MeV.mac", "carbon/c12_400MeV.mac"]}` (paths relative to `macro/`), and, only if needed, the [supported Geant4 versions](#supported-geant4-versions). |
 | `validation/parser.py` | Reads the results of one run and turns them into portal plots: replace the `TODO`s. |
 
 Don't forget to update this `README.md`.
@@ -102,6 +102,26 @@ Pipeline → Run workflow* with `geant4_tag`, or:
 ```bash
 gh workflow run ci.yml -R G4Med-test/MyTest -f geant4_tag=v11.4.3
 ```
+
+#### Supported Geant4 versions
+
+A test runs with every Geant4 version validated for all tests: that is how changes
+in Geant4 show up. Only if your test **cannot** work with some versions, typically
+because it builds an external framework tied to one Geant4 series (GATE, opengate),
+declare the range in `validation/config.json`:
+
+```json
+{"macros": ["main.mac"],
+ "geant4": {"min": "11.4", "max": "11.4", "reason": "GATE 9.4.2 builds only with Geant4 11.4"}}
+```
+
+`min` and `max` are inclusive (give one or both); `"11.4"` is the whole 11.4 series,
+`"11.4.2"` one version. `reason` is required. A validation of a version outside the
+range leaves the test out as *not applicable*, with the reason, and a pipeline
+started with such a `geant4_tag` stops before building. The `TAG` of `Apptainer.def`
+must be in the range. Do not add a `max` just because a new version might change your
+results: finding that out is the purpose of the validation. Details in
+[ci-workflows](https://github.com/G4Med-test/ci-workflows#supported-geant4-versions).
 
 When the test is ready, add it to
 [`ci-workflows/tests.json`](https://github.com/G4Med-test/ci-workflows/blob/main/tests.json)
